@@ -7,9 +7,9 @@ import org.hibernate.validator.constraints.Length;
 public class UserRequest {
 
     private @NotBlank @Email String login;
-    private @NotBlank @Length(min = 6) String password;
+    private @NotBlank @Length(min = 6, max = 36) String password;
 
-    public UserRequest(@NotBlank @Email String login, @NotBlank @Length(min = 6) String password) {
+    public UserRequest(@NotBlank @Email String login, @NotBlank @Length(min = 6, max = 36) String password) {
         this.login = login;
         this.password = password;
     }

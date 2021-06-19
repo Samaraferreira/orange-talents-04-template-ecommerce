@@ -25,7 +25,7 @@ public class User {
     private @NotBlank @Email String login;
 
     @Column(nullable = false)
-    private @NotBlank @Length(min = 6) String password;
+    private @NotBlank @Length(min = 6, max = 36) String password;
 
     @CreationTimestamp
     @Column(nullable = false)
@@ -42,7 +42,7 @@ public class User {
      * @param login must be a well-formed email address
      * @param password must be a simple string
      */
-    public User(@NotBlank @Email String login, @NotBlank @Length(min = 6) String password) {
+    public User(@NotBlank @Email String login, @NotBlank @Length(min = 6, max = 36) String password) {
         this.login = login;
         this.password = new BCryptPasswordEncoder().encode(password);
     }
