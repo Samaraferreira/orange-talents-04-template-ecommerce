@@ -11,12 +11,13 @@ import javax.validation.ReportAsSingleViolation;
 @ReportAsSingleViolation
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = UniqueEmailValidator.class)
-public @interface UniqueEmail {
+@Constraint(validatedBy = UniqueValueValidator.class)
+public @interface UniqueValue {
 
-    String message() default "email already registered";
-
+    String message() default "value already registered";
     Class<?>[] groups() default {};
-
     Class<? extends Payload>[] payload() default {};
+
+    String fieldName();
+    Class<?> domainClass();
 }
