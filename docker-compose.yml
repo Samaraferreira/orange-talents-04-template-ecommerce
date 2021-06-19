@@ -2,6 +2,7 @@ version: '3'
 services:
   postgres:
     image: 'postgres:alpine'
+    container_name: postgres-ecommerce
     volumes:
       - postgres-volume:/var/lib/postgresql/data
     ports:

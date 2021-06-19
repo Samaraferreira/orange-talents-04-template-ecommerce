@@ -1,15 +1,12 @@
 spring:
   jpa:
-    default:
-      properties:
-        hibernate:
-          hbm2ddl:
-            auto: update
-          show_sql: true
+    show-sql: true
+    format-sql: true
+    hibernate:
+      ddl-auto: create-drop
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/ecommerce
+    url: jdbc:postgresql://localhost:5432/ecommerce?createDatabaseIfNotExist=true
     driverClassName: org.postgresql.Driver
     username: postgres
     password: root
-    dialect: POSTGRES
