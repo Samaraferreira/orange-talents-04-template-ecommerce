@@ -19,7 +19,7 @@ public class Category {
     private @NotBlank String name;
 
     @ManyToOne
-    private Category motherCategory;
+    private Category parent;
 
     /**
      * @deprecated for framework use only
@@ -32,7 +32,7 @@ public class Category {
         this.name = name;
     }
 
-    public void setMotherCategory(Category category) {
-        this.motherCategory = category;
+    public void setParent(Category category) {
+        this.parent = category;
     }
 }

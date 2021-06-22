@@ -21,8 +21,6 @@ public class LoggedUser implements UserDetails {
         return springUserDetails.getAuthorities();
     }
 
-
-
     public String getPassword() {
         return springUserDetails.getPassword();
     }
@@ -47,7 +45,7 @@ public class LoggedUser implements UserDetails {
         return springUserDetails.isCredentialsNonExpired();
     }
 
-    public br.com.zup.edu.ecommerce.user.User get() {
+    public br.com.zup.edu.ecommerce.user.User getUser() {
         return user;
     }
 }

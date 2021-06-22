@@ -4,31 +4,37 @@ import br.com.zup.edu.ecommerce.shared.validation.UniqueValue;
 import java.util.Optional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
-import org.springframework.util.Assert;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 public class CategoryRequest {
 
     private @NotBlank @UniqueValue(domainClass = Category.class, fieldName = "name") String name;
-    private @Positive Long motherCategoryId;
+    private @Positive Long parentId;
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setMotherCategoryId(Long motherCategoryId) {
-        this.motherCategoryId = motherCategoryId;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
-    public Long getMotherCategoryId() {
-        return motherCategoryId;
+    public Long getParentId() {
+        return parentId;
     }
 
     public Category toModel(CategoryRepository repository) {
         var category = new Category(name);
 
-        if (motherCategoryId != null) {
-            Optional<Category> motherCategory = repository.findById(motherCategoryId);
-            motherCategory.ifPresent(category::setMotherCategory);
+        if (parentId != null) {
+            Optional<Category> parent = repository.findById(parentId);
+
+            if (parent.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
+            }
+            category.setParent(parent.get());
+//            parent.ifPresent(category::setMotherCategory);
         }
 
         return category;
