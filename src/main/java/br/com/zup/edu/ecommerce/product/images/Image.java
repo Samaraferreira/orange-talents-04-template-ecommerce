@@ -16,7 +16,7 @@ public class Image {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false) @NotNull
+    @Column(nullable = false) @NotNull @URL
     private String link;
 
     @ManyToOne(optional = false)

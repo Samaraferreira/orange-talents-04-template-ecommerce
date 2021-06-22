@@ -2,9 +2,10 @@ package br.com.zup.edu.ecommerce.product;
 
 import br.com.zup.edu.ecommerce.category.Category;
 import br.com.zup.edu.ecommerce.category.CategoryRepository;
-import br.com.zup.edu.ecommerce.product.images.Image;
 import br.com.zup.edu.ecommerce.product.images.ImageUpload;
 import br.com.zup.edu.ecommerce.product.images.ImagesRequest;
+import br.com.zup.edu.ecommerce.product.opinion.ProductOpinion;
+import br.com.zup.edu.ecommerce.product.opinion.ProductOpinionRequest;
 import br.com.zup.edu.ecommerce.shared.security.LoggedUser;
 import java.io.IOException;
 import java.util.Optional;
@@ -17,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,13 +57,12 @@ public class ProductController {
         }
 
         Product product = request.toModel(categoryOptional.get(), loggedUser.getUser());
-
         productRepository.save(product);
 
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "{productId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{productId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addImages(@PathVariable Long productId,
                                        @ModelAttribute @Valid ImagesRequest request,
                                        @AuthenticationPrincipal LoggedUser loggedUser) {
@@ -77,7 +76,6 @@ public class ProductController {
 
         try {
             final Set<String> links = imageUpload.upload(request.getImages());
-
             product.addImages(links);
 
             productRepository.save(product);
@@ -86,5 +84,21 @@ public class ProductController {
         } catch (IOException exception) {
             return ResponseEntity.internalServerError().body("Unable to save images");
         }
+    }
+
+    @PostMapping("/{productId}/opinions")
+    public ResponseEntity<?> addOpinion(@PathVariable Long productId,
+                                             @RequestBody @Valid ProductOpinionRequest request,
+                                             @AuthenticationPrincipal LoggedUser loggedUser) {
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+
+        ProductOpinion productOpinion = request.toModel(loggedUser.getUser(), product);
+        product.addOpinion(productOpinion);
+
+        productRepository.save(product);
+
+        return ResponseEntity.ok().build();
     }
 }

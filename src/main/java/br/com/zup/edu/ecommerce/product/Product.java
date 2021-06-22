@@ -5,6 +5,7 @@ import br.com.zup.edu.ecommerce.product.feature.ProductFeature;
 import br.com.zup.edu.ecommerce.product.feature.ProductFeatureRequest;
 import br.com.zup.edu.ecommerce.product.images.Image;
 import br.com.zup.edu.ecommerce.product.images.ImagesRequest;
+import br.com.zup.edu.ecommerce.product.opinion.ProductOpinion;
 import br.com.zup.edu.ecommerce.user.User;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -56,6 +57,9 @@ public class Product {
     @ManyToOne(optional = false)
     private Category category;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<ProductOpinion> opinions = new ArrayList<>();
+
     @ManyToOne(optional = false)
     private User user;
 
@@ -80,11 +84,15 @@ public class Product {
     }
 
     public void addImages(Set<String> links) {
-        images.addAll(links.stream().map(link -> new Image(link, this)).collect(Collectors.toList()));
+        this.images.addAll(links.stream().map(link -> new Image(link, this)).collect(Collectors.toList()));
     }
 
     public User getUser() {
         return user;
+    }
+
+    public void addOpinion(ProductOpinion opinion) {
+        this.opinions.add(opinion);
     }
 
     @Override

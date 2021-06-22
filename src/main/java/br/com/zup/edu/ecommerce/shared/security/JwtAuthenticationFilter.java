@@ -1,6 +1,5 @@
 package br.com.zup.edu.ecommerce.shared.security;
 
-import br.com.zup.edu.ecommerce.user.User;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
