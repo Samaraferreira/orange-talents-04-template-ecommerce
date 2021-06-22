@@ -3,11 +3,15 @@ package br.com.zup.edu.ecommerce.product;
 import br.com.zup.edu.ecommerce.category.Category;
 import br.com.zup.edu.ecommerce.product.feature.ProductFeature;
 import br.com.zup.edu.ecommerce.product.feature.ProductFeatureRequest;
+import br.com.zup.edu.ecommerce.product.images.Image;
+import br.com.zup.edu.ecommerce.product.images.ImagesRequest;
 import br.com.zup.edu.ecommerce.user.User;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
@@ -46,6 +50,9 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<ProductFeature> features = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Image> images = new ArrayList<>();
+
     @ManyToOne(optional = false)
     private Category category;
 
@@ -70,5 +77,26 @@ public class Product {
         this.features.addAll(features.stream().map(f -> f.toModel(this)).collect(Collectors.toSet()));
         this.category = category;
         this.user = user;
+    }
+
+    public void addImages(Set<String> links) {
+        images.addAll(links.stream().map(link -> new Image(link, this)).collect(Collectors.toList()));
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Objects.equals(id, product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
