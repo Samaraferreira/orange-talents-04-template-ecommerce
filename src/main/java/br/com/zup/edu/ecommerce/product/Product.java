@@ -4,8 +4,8 @@ import br.com.zup.edu.ecommerce.category.Category;
 import br.com.zup.edu.ecommerce.product.feature.ProductFeature;
 import br.com.zup.edu.ecommerce.product.feature.ProductFeatureRequest;
 import br.com.zup.edu.ecommerce.product.images.Image;
-import br.com.zup.edu.ecommerce.product.images.ImagesRequest;
 import br.com.zup.edu.ecommerce.product.opinion.ProductOpinion;
+import br.com.zup.edu.ecommerce.product.question.ProductQuestion;
 import br.com.zup.edu.ecommerce.user.User;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -60,8 +60,11 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL)
     private List<ProductOpinion> opinions = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<ProductQuestion> questions = new ArrayList<>();
+
     @ManyToOne(optional = false)
-    private User user;
+    private User owner;
 
     @Deprecated
     public Product() {
@@ -73,26 +76,30 @@ public class Product {
                    String description,
                    List<ProductFeatureRequest> features,
                    Category category,
-                   User user) {
+                   User owner) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.description = description;
         this.features.addAll(features.stream().map(f -> f.toModel(this)).collect(Collectors.toSet()));
         this.category = category;
-        this.user = user;
+        this.owner = owner;
     }
 
     public void addImages(Set<String> links) {
         this.images.addAll(links.stream().map(link -> new Image(link, this)).collect(Collectors.toList()));
     }
 
-    public User getUser() {
-        return user;
-    }
-
     public void addOpinion(ProductOpinion opinion) {
         this.opinions.add(opinion);
+    }
+
+    public void addQuestion(ProductQuestion question) {
+        this.questions.add(question);
+    }
+
+    public User getOwner() {
+        return owner;
     }
 
     @Override

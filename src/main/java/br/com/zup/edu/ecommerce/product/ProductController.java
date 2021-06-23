@@ -6,7 +6,10 @@ import br.com.zup.edu.ecommerce.product.images.ImageUpload;
 import br.com.zup.edu.ecommerce.product.images.ImagesRequest;
 import br.com.zup.edu.ecommerce.product.opinion.ProductOpinion;
 import br.com.zup.edu.ecommerce.product.opinion.ProductOpinionRequest;
+import br.com.zup.edu.ecommerce.product.question.ProductQuestion;
+import br.com.zup.edu.ecommerce.product.question.ProductQuestionRequest;
 import br.com.zup.edu.ecommerce.shared.security.LoggedUser;
+import br.com.zup.edu.ecommerce.utils.email.Emails;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +38,7 @@ public class ProductController {
     private CategoryRepository categoryRepository;
     private ProductRepository productRepository;
     private ImageUpload imageUpload;
+    private Emails emails;
 
     @InitBinder(value = "productRequest")
     public void init(WebDataBinder binder) {
@@ -42,10 +46,14 @@ public class ProductController {
     }
 
     @Autowired
-    public ProductController(CategoryRepository categoryRepository, ProductRepository productRepository, ImageUpload imageUpload) {
+    public ProductController(CategoryRepository categoryRepository,
+                             ProductRepository productRepository,
+                             ImageUpload imageUpload,
+                             Emails emails) {
         this.categoryRepository = categoryRepository;
         this.productRepository = productRepository;
         this.imageUpload = imageUpload;
+        this.emails = emails;
     }
 
     @PostMapping
@@ -67,10 +75,9 @@ public class ProductController {
                                        @ModelAttribute @Valid ImagesRequest request,
                                        @AuthenticationPrincipal LoggedUser loggedUser) {
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+        Product product = findProduct(productId);
 
-        if (!product.getUser().equals(loggedUser.getUser())) {
+        if (!product.getOwner().equals(loggedUser.getUser())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User does not have permission");
         }
 
@@ -91,8 +98,7 @@ public class ProductController {
                                              @RequestBody @Valid ProductOpinionRequest request,
                                              @AuthenticationPrincipal LoggedUser loggedUser) {
 
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+        Product product = findProduct(productId);
 
         ProductOpinion productOpinion = request.toModel(loggedUser.getUser(), product);
         product.addOpinion(productOpinion);
@@ -100,5 +106,28 @@ public class ProductController {
         productRepository.save(product);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{productId}/questions")
+    public ResponseEntity<?> addQuestion(@PathVariable Long productId,
+                                         @RequestBody @Valid ProductQuestionRequest request,
+                                         @AuthenticationPrincipal LoggedUser loggedUser) {
+
+        Product product = findProduct(productId);
+
+        ProductQuestion question = request.toModel(loggedUser.getUser(), product);
+
+        product.addQuestion(question);
+
+        productRepository.save(product);
+
+        emails.newQuestion(question);
+
+        return ResponseEntity.ok().build();
+    }
+
+    private Product findProduct(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
     }
 }
