@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.validation.constraints.Positive;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
@@ -109,6 +109,12 @@ public class Product {
                                                 .average();
         if (average.isEmpty()) return null;
         return average.getAsDouble();
+    }
+
+    public boolean decrementQuantity(@Positive Integer quantity) {
+        if (this.quantity < quantity) return false;
+        this.quantity -= quantity;
+        return true;
     }
 
     public int getTotalRatings() {
