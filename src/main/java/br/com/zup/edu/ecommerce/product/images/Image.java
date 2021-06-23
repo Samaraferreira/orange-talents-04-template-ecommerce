@@ -31,6 +31,14 @@ public class Image {
         this.product = product;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
     public void setLink(String link) {
         this.link = link;
     }

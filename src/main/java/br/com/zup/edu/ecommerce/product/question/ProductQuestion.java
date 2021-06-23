@@ -5,6 +5,7 @@ import br.com.zup.edu.ecommerce.user.User;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +28,7 @@ public class ProductQuestion {
     @ManyToOne(optional = false)
     private User author;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Product product;
 
     @Deprecated
@@ -38,6 +39,22 @@ public class ProductQuestion {
         this.title = title;
         this.author = author;
         this.product = product;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     public User getAuthor() {

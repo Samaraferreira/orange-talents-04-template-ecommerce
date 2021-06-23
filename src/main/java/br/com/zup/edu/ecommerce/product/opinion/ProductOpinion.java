@@ -4,6 +4,7 @@ import br.com.zup.edu.ecommerce.product.Product;
 import br.com.zup.edu.ecommerce.user.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,9 +27,9 @@ public class ProductOpinion {
     private String description;
 
     @ManyToOne(optional = false)
-    private User user;
+    private User author;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Product product;
 
     @Deprecated
@@ -39,7 +40,31 @@ public class ProductOpinion {
         this.rating = rating;
         this.title = title;
         this.description = description;
-        this.user = user;
+        this.author = user;
         this.product = product;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 }

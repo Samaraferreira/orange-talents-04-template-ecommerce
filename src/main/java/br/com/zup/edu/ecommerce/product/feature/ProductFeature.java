@@ -4,6 +4,7 @@ import br.com.zup.edu.ecommerce.product.Product;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,7 +23,7 @@ public class ProductFeature {
     @Column(nullable = false)
     private String description;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Product product;
 
     @Deprecated
@@ -35,8 +36,16 @@ public class ProductFeature {
         this.product = product;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override

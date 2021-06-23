@@ -13,16 +13,19 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
@@ -54,14 +57,15 @@ public class Product {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Image> images = new ArrayList<>();
 
-    @ManyToOne(optional = false)
-    private Category category;
-
     @OneToMany(cascade = CascadeType.ALL)
     private List<ProductOpinion> opinions = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)
+    @OrderBy("createdAt desc")
     private List<ProductQuestion> questions = new ArrayList<>();
+
+    @ManyToOne(optional = false)
+    private Category category;
 
     @ManyToOne(optional = false)
     private User owner;
@@ -96,6 +100,63 @@ public class Product {
 
     public void addQuestion(ProductQuestion question) {
         this.questions.add(question);
+    }
+
+    public Double getAverageRating() {
+        OptionalDouble average = this.opinions.stream()
+                                                .mapToInt(ProductOpinion::getRating)
+                                                .asDoubleStream()
+                                                .average();
+        if (average.isEmpty()) return null;
+        return average.getAsDouble();
+    }
+
+    public int getTotalRatings() {
+        return this.opinions.size();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public Set<ProductFeature> getFeatures() {
+        return features;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public List<ProductOpinion> getOpinions() {
+        return opinions;
+    }
+
+    public List<ProductQuestion> getQuestions() {
+        return questions;
     }
 
     public User getOwner() {
