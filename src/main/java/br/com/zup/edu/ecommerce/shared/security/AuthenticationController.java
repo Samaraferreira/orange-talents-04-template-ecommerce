@@ -6,7 +6,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,14 +23,14 @@ public class AuthenticationController {
     private TokenManager tokenManager;
 
     @PostMapping
-    public ResponseEntity<String> auth(@RequestBody @Validated LoginRequest request){
+    public ResponseEntity<LoginResponse> auth(@RequestBody @Validated LoginRequest request){
         UsernamePasswordAuthenticationToken authenticationToken = request.build();
 
         try {
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             String jwt = tokenManager.generateToken(authentication);
 
-            return ResponseEntity.ok(jwt);
+            return ResponseEntity.ok(new LoginResponse(jwt));
         } catch (AuthenticationException e) {
             return ResponseEntity.badRequest().build();
         }

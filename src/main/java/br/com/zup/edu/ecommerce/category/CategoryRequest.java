@@ -1,16 +1,21 @@
 package br.com.zup.edu.ecommerce.category;
 
 import br.com.zup.edu.ecommerce.shared.validation.UniqueValue;
-import java.util.Optional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 public class CategoryRequest {
 
     private @NotBlank @UniqueValue(domainClass = Category.class, fieldName = "name") String name;
     private @Positive Long parentId;
+
+    @Deprecated
+    public CategoryRequest() {
+    }
+
+    public CategoryRequest(String name) {
+        this.name = name;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -24,17 +29,15 @@ public class CategoryRequest {
         return parentId;
     }
 
-    public Category toModel(CategoryRepository repository) {
-        var category = new Category(name);
+    public String getName() {
+        return name;
+    }
 
-        if (parentId != null) {
-            Optional<Category> parent = repository.findById(parentId);
+    public Category toModel(Category parent) {
+        var category = new Category(this.name);
 
-            if (parent.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
-            }
-            category.setParent(parent.get());
-//            parent.ifPresent(category::setMotherCategory);
+        if (parent != null) {
+            category.setParent(parent);
         }
 
         return category;
