@@ -6,6 +6,8 @@ import br.com.zup.edu.ecommerce.purchase.payment.Payment;
 import br.com.zup.edu.ecommerce.shared.security.LoggedUser;
 import br.com.zup.edu.ecommerce.utils.email.Emails;
 import javax.validation.Valid;
+
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+@Api(tags = "Purchases")
 @RestController
-@RequestMapping("/api/v1/purchase")
+@RequestMapping(value = "/api/v1/purchase", produces="application/json", consumes="application/json")
 public class PurchaseController {
 
     private PurchaseRepository purchaseRepository;

@@ -14,6 +14,11 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,8 +36,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+@Api(tags = "Products")
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping(value = "/api/v1/products", produces="application/json")
 @Validated
 public class ProductController {
 
@@ -71,6 +77,12 @@ public class ProductController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "Retorna um produto pelo id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna o produto solicitado"),
+            @ApiResponse(code = 401, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 404, message = "Produto não encontrado")
+    })
     @GetMapping("/{productId}")
     public ResponseEntity<ProductResponse> details(@PathVariable Long productId) {
         Product product = findProduct(productId);

@@ -18,4 +18,12 @@ public class UserRequest {
     public User toModel() {
         return new User(login, password);
     }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }
